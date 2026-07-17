@@ -1,30 +1,156 @@
-# Bookipi Agent CLI — Releases
+# Bookipi Agent CLI
 
 **Bookie** is Bookipi's AI assistant: invoices, payments, expenses, customers,
 contracts, reports, and daily automations — all through conversation.
 
-This repository hosts the packaged releases. The skill bundle is self-contained
-(it includes the Bookipi CLI), so no separate installation is required.
+You don't run commands. You talk to Claude in Cowork, Claude Desktop, or
+Claude Code, and Claude does the work. This guide shows you how to set that up.
 
-## Install
+The skill bundle is self-contained (it includes the Bookipi CLI), so no separate
+installation is required.
+
+## 1. Install the skill
 
 1. Download the latest `bookipi-cli.skill` from
    [Releases](https://github.com/Bookipi-Group/bookipi-agent-cli-release/releases).
-2. Add it as a skill in Claude (Cowork or Claude Code): upload the `.skill`
-   file in your skills settings.
-3. Start a conversation: try **"morning Bookie"**, **"who owes me money?"**, or
-   paste a receipt and say **"log this as an expense"**.
+2. Double-click it. Cowork or Claude Desktop will prompt to install.
+3. Confirm. It now appears in your Skills list as `bookipi-cli`.
 
-On first use, Bookie walks you through signing in to your Bookipi account.
+If double-click does nothing, drag the file into the Cowork window. If your
+browser stripped the `.skill` extension on download, rename it back.
 
-## What it can do
+**Claude Code (terminal):** a skill installed via Claude Desktop is also
+available in Claude Code sessions started from the desktop app. For standalone
+terminal use, unzip the `.skill` file into `~/.claude/skills/` (it's a zip —
+you'll end up with `~/.claude/skills/bookipi-cli/`). Claude Code runs the CLI
+on your own machine, so you'll also need Node 22.12 or newer installed.
 
-- Create, send, and chase invoices (staged reminders with a no-double-nag cooldown)
-- Turn product photos into catalog items and invoices — images included
-- Log receipts as expenses (photo/PDF, with OCR)
-- Reconcile bank statements against open invoices
-- Send contracts for e-signature (your PDF, or AI-drafted)
-- Morning brief with prepared actions behind a single approval
-- Reports, dashboards, insights, and a weekly digest
+## 2. Allow network access (only on your own Claude subscription, one-time)
+
+You can skip this entirely if:
+
+- You're on Claude Code — it runs on your own machine with your normal network,
+  so an org allowlist doesn't apply.
+- Your workspace admin has already allowlisted the domains below.
+
+You only need this if you're using Cowork / Claude Desktop on your own
+workspace/org. Cowork runs Claude in an Anthropic-hosted sandbox that blocks
+unknown websites, so Bookipi's servers must be on your org's allowlist —
+otherwise login will fail on the first try. (Tip: if you hit network trouble in
+Cowork, switching to Claude Code is a quick workaround.)
+
+Ask your workspace admin (or do it yourself if you're an admin):
+**Organization Settings → Capabilities → Code execution → Additional allowed
+domains**, and add:
+
+```
+*.bkpi.co
+*.bookipi.com
+*.bookipay.com
+*.s3.amazonaws.com
+```
+
+The first three are Bookipi servers (invoices, login, meetings, contracts, PDF
+rendering). The S3 one is only needed for uploading receipt photos and showing
+logos/QR codes in invoice previews.
+
+**How you'll know it's missing:** Claude will tell you directly — something like
+"this environment is blocking network access to Bookipi's servers", usually on
+the very first request. That message includes the same list above; forward it to
+your admin.
+
+## 3. Set up your project folder
+
+Every Bookipi workspace lives in its own folder. This keeps your credentials and
+account-specific data scoped — no env-var juggling, no shared global state.
+
+1. In Cowork, click **New Project** and name it something like `bookipi`. Cowork
+   creates the folder for you. In Claude Code there's no button — just start
+   `claude` inside any folder you want to use as the workspace.
+2. In the chat, say: **Set up Bookipi in this folder.**
+   Claude opens a browser to log in, then saves your credentials inside the
+   folder (under `.bookipi/`, auto-gitignored). Confirm with: **Who am I logged
+   in as?**
+
+Every session you open in that project is auto-logged-in. To work with a
+different Bookipi account, create a different folder and repeat — each folder is
+its own workspace.
+
+**Claude Code only:** the folder is recommended, not required. If you skip it and
+just say "log me in to Bookipi", credentials are saved globally (`~/.bookipi/`)
+and work from any directory on your machine — fine for a single account. Use
+per-folder workspaces when you want to work with multiple accounts side by side.
+(In Cowork the project folder is the only way to keep credentials between
+sessions, so there it's not optional.)
+
+## 4. Try things
+
+### Reading
+
+- "Who owes me money?"
+- "Pull up Wayne Construction."
+- "Show my overdue invoices."
+- "Show me what INV-650 looks like." (you get a print-ready PDF)
+- "List my open proposals."
+- "Show my pending contracts."
+- "What deals are in proposal stage?"
+- "Show me my items / products."
+- "What's on my calendar today?"
+- "Find my meetings with Maria this week."
+- "Is my Google Calendar connected?"
+- "Give me the morning brief."
+- "How much did I invoice last month?"
+- "Who's my biggest customer this quarter?"
+- "What products are selling well?"
+
+### Creating
+
+- "Add a new customer: Acme Corp, billing@acme.com."
+- "Add 'logo design' to my items list at $200."
+- "Add a new deal — Stark kitchen renovation, $40,000."
+- "Create an invoice for Acme — $5,000 for consulting."
+- "Draft a proposal for the Stark deal — kitchen renovation, $40,000."
+- "Turn that accepted proposal into a contract."
+
+### Sending
+
+- "Send invoice INV-650 to alice@acme.com."
+- "Send the proposal to John."
+- "Send the MSA contract to Bruce."
+- "Email Maria — tell her I'll be late to the call."
+- "Send reminders to all my overdue invoices."
+
+### Receipts & expenses (drag an image/PDF into chat)
+
+- (drop in a receipt photo) "Log this as an expense."
+- "What expense categories do I have?"
+- "Show my expenses this month."
+
+### Reports & insights
+
+- "Build me a dashboard for last quarter." (opens an HTML report)
+- "Give me insights on my business this month."
+- "What should I focus on this week?"
+
+### Acting / changing things
+
+- "Mark the Stark deal as won."
+- "Mark INV-650 as paid."
+- "Update Wayne's email to wayne@new-domain.com."
+- "Has Bruce signed the MSA yet?"
+- "Switch to my other Bookipi account."
+- "What companies do I have?"
+- "Log me out."
 
 Everything that sends, charges, or records stops for your confirmation first.
+
+## Found a bug? Stuck?
+
+Open an issue on
+[GitHub](https://github.com/Bookipi-Group/bookipi-agent-cli-release/issues) with:
+
+- What you typed
+- What Claude did
+- What you expected
+
+The more detail, the faster we can help.
