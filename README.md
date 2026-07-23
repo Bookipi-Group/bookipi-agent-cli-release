@@ -1,7 +1,8 @@
-# Bookipi Agent CLI
+# Bookipi CLI
 
-**Bookie** is Bookipi's AI assistant: invoices, payments, expenses, customers,
-contracts, reports, and daily automations — all through conversation.
+**Bookipi CLI** brings your Bookipi account to Claude: invoices, payments,
+expenses, customers, contracts, reports, and daily automations — all through
+conversation.
 
 You don't run commands. You talk to Claude in Cowork, Claude Desktop, or
 Claude Code, and Claude does the work. This guide shows you how to set that up.
